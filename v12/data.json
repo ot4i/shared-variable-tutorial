@@ -1,0 +1,376 @@
+{
+    "version": "0.6",
+    "pageContent": 
+	{
+        "_comments": "JSON object that contains data for page labels, buttons, etc.",
+        "navItems": 
+		{
+            "_common": 
+			{
+                "buttonBackToGallery": 
+				{
+                    "name": "Back To Gallery",
+					"method": "backToGallery()",
+					"idName": "backToGallery"	
+                },
+                "buttonStartTutorial": 
+				{
+                    "name": "Start Tutorial",
+					"method": "startTutorialFromDetailsScreen()",
+					"idName": "startTutorial"
+                },
+				"buttonViewDetails": 
+				{
+                    "name": "View Details",
+					"method": "viewDetails()",
+					"idName": "stepsViewDetails"	
+                }
+            }
+        }
+    },
+    "tutorial": 
+	{
+        "_common": 
+		{
+            "name": "Using a Compute node to access a Lookup table stored in a shared variable in memory",
+            "shortDescription": "Learn how to use ESQL shared variables to access a Lookup table that is cached in memory by exploring this simple example.",
+            "durationText": "This tutorial takes approximately",
+            "durationTime": "6 minutes",
+            "_resourceToOpenComment": "The ID of the first resource to open when the user imports the tutorial. Resource IDs are defined in the repo_metadata.json Tutorials listing on ot4i.",
+            "resourceToOpen": "MainFlow",
+            "helpLink": 
+			{
+                "text": "IBM Documentation",
+           		"link": "https://www.ibm.com/docs/SSTTDS_12.0/com.ibm.etools.mft.doc/acesw_home.html"
+            }
+        },
+        "pageDetails": 
+		{
+            "topicsName": "Tutorial topics",
+            "_topicListComment": "A short list of product concepts or tasks demonstrated by this tutorial",
+            "topicList": 
+			[
+                {
+                    "title": "ESQL shared variables"
+                }
+            ],
+            "outcomesName": "Learning outcomes",
+            "_outcomesComment": "Use IBM App Connect Enterprise ESQL shared variables to access and load a Lookup table cached in memory.",
+            "outcomeList": 
+			[
+                {
+                    "title": "Use IBM App Connect Enterprise to access a Lookup table, which is cached in memory, by using ESQL shared variables."
+                }
+            ],
+            "summary": 
+			{
+                "overviewName": "OVERVIEW",
+                "_overviewComment": "This tutorial demonstrates how to implement a shared variable in-memory cache in a message flow. It shows using a Compute node to replace an abbreviated value in a message with an associated full name from a Lookup table that is cached in memory. Another Compute node shows how to load the Lookup table based upon CSV content stored in a local file.",
+                "sections": 
+				[
+                    {
+                        "section": "This tutorial demonstrates how to access in-memory ESQL shared variables using a Compute node."
+                    },
+                    {
+                        "section": "A Compute node demonstrates reading from an ESQL shared variable cached in memory, to replace an abbreviated value in an input message with the associated full name from a Lookup table."
+                    },
+                    {
+                        "section": "Another Compute node demonstrates writing to an ESQL shared variable cached in memory, to populate the Lookup table using data that has been read from a comma-separated-values file."
+                    },
+                    {
+                        "section": "In IBM App Connect Enterprise, ESQL shared variables can be used to implement an in-memory cache in a message flow. This technique is suitable for fast access to data that you want to reuse regularly. The Compute node can get, put, and remove data from shared variables."
+                    }
+                ]
+            },
+			"helpLinks": 
+			{
+				"_helpLinksComment": "Helplinks that have a type:web attribute are rendered as web links. Otherwise, links are assumed to be to embedded Help topics in the Knowledge Center.",
+				"title": "Find out more",
+				"details": 
+				[
+					{
+						"title": "IBM Documentation link to ",
+						"description": "Developing integration solutions from scratch",
+						"link": "https://www.ibm.com/docs/en/app-connect/12.0?topic=solutions-developing-integration-from-scratch",
+						"type": "web"
+					},
+					{
+						"title": "IBM Documentation link to ",
+						"description": "Data caching overview",
+						"link": "https://www.ibm.com/docs/en/app-connect/12.0?topic=caching-data-overview",
+						"type": "web"
+					},
+					{
+						"title": "IBM Documentation link to ",
+						"description": "Long-lived variables",
+						"link": "https://www.ibm.com/docs/en/app-connect/12.0?topic=overview-long-lived-variables",
+						"type": "web"
+					}
+				]
+			}
+        },
+        "pageSteps": 
+		{
+            "create": 
+			{
+                "overview": 
+				{
+                    "name": "Create",
+                    "heading": "Import the application",
+                    "_createComment": "A description of what will happen when the user clicks Import.",
+                    "sections": 
+                    [
+                        {
+                            "section": "Click <span class='application'>Import</span> to import the application into your workspace."
+                        },
+                        {
+                            "section": "The <span class='application'>LookupTable_UsingESQLSharedVariable</span> application is now shown in the Application Development view of your workspace. The <span class='msgflow'>LookupCountyFullName</span> message flow is opened in the Message Flow editor."
+                        },
+                        {
+                            "section": "The <span class='msgflow'>LookupCountyFullName</span> message flow contains six message flow nodes which can be traversed in two ways depending on whether or not the cache needs loading:",
+                            "steps": 
+                             {
+                                 "type":"unordered",
+                                 "details":
+                                 [
+                                  { 
+                                     "details":"<span class='uicontrol'>HTTP Input</span>: An Input node that receives an input message across HTTP that contains an abbreviated county name."
+                                  },
+                                  { 
+                                     "details":"<span class='uicontrol'>LookupCountyFullName</span>: A Compute node that uses an ESQL shared variable of ROW type as an in-memory cache providing a Lookup facility to retrieve the full county name, by using the abbreviated county name as a key."
+                                  },
+                                  { 
+                                     "details":"<span class='uicontrol'>FoundCountyFullName</span>: A Route node that determines the path that the message should take depending on whether the full county name was retrieved from the shared variable (if not, the flow attempts to re-populate the cache by reading from a file)"
+                                  },
+                                  { 
+                                     "details":"<span class='uicontrol'>File Read</span>: A FileRead node that reads the file that contains the Lookup table data."
+                                  },
+                                  { 
+                                     "details":"<span class='uicontrol'>LoadCache</span>: A Compute node that uses loads the Lookup table data which was read from the file into the ESQL shared variable."
+                                  },
+                                  { 
+                                     "details":"<span class='uicontrol'>HTTP Reply</span>: A Reply node that returns a message across HTTP that contains the full county name."
+                                  }
+                                 ]
+                             }
+                            
+                        },
+                        {
+                            "section": "You can explore the configuration of these nodes later in the tutorial."
+                        }
+                    ]
+                },
+                "helpLinks": 
+                {
+                    "title": "Find out more",
+                    "details": 
+                    [
+                        {
+                            "title": "IBM Documentation link to ",
+                            "description": "Developing integration solutions from scratch",
+                            "link": "https://www.ibm.com/docs/en/app-connect/12.0?topic=solutions-developing-integration-from-scratch",
+							"type": "web"
+                        },
+                        {
+                             "title": "IBM Documentation link to ",
+                             "description": "Data caching overview",
+                             "link": "https://www.ibm.com/docs/en/app-connect/12.0?topic=caching-data-overview",
+                             "type": "web"
+                        },
+                        {
+                             "title": "IBM Documentation link to ",
+                             "description": "Long-lived variable",
+                             "link": "https://www.ibm.com/docs/en/app-connect/12.0?topic=overview-long-lived-variables",
+                             "type": "web"
+                        }
+                    ]
+                },
+                "actions": 
+				{
+                    "title": "Create Actions",
+                    "details": 
+                    [
+                        {
+                            "name": "Import",
+                            "method": "importArtifacts()"
+                        }
+                    ]
+                }
+            },
+            "prepare": 
+			{
+                "overview": 
+				{
+                    "name": "Prepare",
+                    "heading": "Preparing to run the application",
+                    "_prepareComment": "A description of what just happened when the user clicked Import, and what will happen when the user clicks Deploy.",
+                    "sections": 
+                    [
+                        {
+                            "section": "Perform the following steps to prepare your environment to run the <span class='application'>LookupTable_UsingESQLSharedVariable</span> application.",
+                            "steps": 
+                             {
+                                 "type":"ordered",
+                                 "details":
+                                 [
+                                  { 
+                                     "name":"Setup the location of the lookup table initialization data file",
+                                     "details":"Setup the location of the lookup table initialization data file by completing one of the following steps:",
+                                     "substeps": 
+                                     {
+                                         "type": "unordered",
+                                         "details": 
+                                         [
+                                             {
+                                                 "details": "On Windows: Create the input directory <code>C:\\temp</code>."
+                                             },
+                                             {
+                                                 "details": "On Linux: Create a suitable input directory such as <code>/tmp</code> and change the Input directory property of the 'File Read' node accordingly to point to the same directory."
+                                             }
+                                         ]
+                                     }
+                                  },
+                                  { 
+                                     "name":"Copy the lookup table initialization data file",
+                                     "details":"Copy the <span class='filepath'>CountyAbbrNames.csv</span> file from the 'Other Resources' folder in the <span class='application'>LookupTable_UsingESQLSharedVariable</span> application in your Toolkit workspace, to the input directory on your file system that you created in step 2."
+                                  }
+                                 ]
+                             }
+                        },
+                        {
+                            "section": "Next you will use the Flow exerciser to send HTTP requests to the message flow."
+                        }
+                    ]
+                },
+                "helpLinks": 
+				{
+                    "title": "Find out more",
+                    "details": 
+					[
+                        {
+                            "title": "IBM Documentation link to ",
+                            "description": "FileRead node",
+                            "link": "https://www.ibm.com/docs/en/app-connect/12.0?topic=nodes-fileread-node",
+							"type": "web"
+                        }
+                    ]
+                },
+                "actions-removed": 
+				{
+                    "title": "Prepare Actions",
+                    "details": 
+					[
+                        {
+                            "name": "Deploy",
+                            "method": "deployArtifacts()"
+                        }
+                    ]
+                }
+            },
+            "run": 
+            {
+                "overview": 
+                {
+                    "name": "Run",
+                    "heading": "Follow these steps to run the application",
+                    "_runComment": "The full steps for the user to run through the tutorial. Use 'sections' to render paragraphs, 'steps' with a type of 'ordered' or 'unordered' to render HTML lists, and 'substeps' to render nested lists.",
+                    "sections": 
+                    [
+                        {
+                            "section": "Open the <span class='uicontrol'>LookupCountyFullName</span> message flow from the application and complete the following steps:",
+                            "steps": 
+                             {
+                                "type": "ordered",
+                                "details": 
+                                [
+									
+								  	{ 
+                                    	"details":"Drag and drop deploy the shared library <span class='application'>LookupTableCSVdata</span> on to your integration server."
+                                  	},									
+                                    {
+                                        "details": "Click the <span class='icon'>Flow Exerciser</span> icon <img src='http://ot4i.github.io/ot4i.tutorials//dist/images/icons/iib/startFlowExerciser.png' alt='' /> to start recording the message path through the flow."
+                                    },
+                                    {
+                                        "details": "Click the <span class='icon'>Send Message</span> icon <img src='http://ot4i.github.io/ot4i.tutorials/dist/images/icons/iib/sendMessage.png' alt='' /> to select the first message to send to the flow."
+                                    },
+                                    {
+                                        "details": "Select the 'Berks' input message, and click <span class='uicontrol'>Send</span>.<br/>The request message is sent to the HTTP Input node, and the response message containing the full name, 'Berkshire', is received."
+                                    },
+                                    {
+                                        "details": "Close the Send message dialog. <br/>The message path is automatically highlighted on the message flow. Note: The message path shows that the message was sent through the 'File Read' and 'LoadCache' Compute nodes. Because the Lookup table was not yet cached in memory by the ESQL shared variables, the 'LookupCountyFullName' Compute node cannot find a match."
+                                    },
+                                    {
+                                        "details": "Click on any connection to see the data that passed through that connection."
+                                    },
+                                    {
+                                        "details": "Click the <span class='icon'>Send Message</span> icon <img src='http://ot4i.github.io/ot4i.tutorials/dist/images/icons/iib/sendMessage.png' alt='' /> again, to select the 'Hants' message and send it to the flow by clicking <span class='uicontrol'>Send</span>."
+                                    },
+                                    {
+                                        "details": "Review the received message and close the Send message dialog to see the message path.<br/>Note: The message path shows that the message was sent directly to the 'HTTP Reply' node. Because the Lookup table is cached in memory, the 'LookupCountyFullName' Compute node found a match and set the 'CountyFullName'."
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "section": "If you restart the integration node or integration server, the next message is sent through the 'File Read' and 'LoadCache' Compute nodes again."
+                        },
+                        {
+                            "section": "<span class='uicontrol'>The following optional steps help you explore and understand the application</span>"
+                        },
+                        {
+                            "section": "The <span class='msgflow'>LookupCountyFullName</span> message flow uses an HTTP Input node to receive a JSON message that contains a 'CountyAbbr' value. The 'CountyAbbr' value is used in the 'LookupCountyFullName' Compute node to look up the replacement full county name from the in-memory cache.",
+                            "steps": 
+                             {
+                                "type": "ordered",
+                                "details": 
+                                [
+                                    {
+                                        "details": "Double-click the 'LookupCountyFullName' Compute node to open the 'LookupCountyFullName.esql' file."
+                                    },
+                                    {
+                                        "details": "In the 'LookupCountyFullName_Compute' ESQL module, the 'CountyFullName' element is created only if an entry is found in the in-memory cache.  The cache is defined as the 'countyNameCache' ESQL Shared Row variable.  The value for the input element, 'CountyAbbr', is placed in the 'Environment' so that it is not overwritten by the data that is retrieved from the <span class='filepath'>'CountyAbbrNames.csv'</span> file."
+                                    },
+                                    {
+                                        "details": "Return to the message flow editor.<br/>The 'FoundCountyFullName' Route node checks for the presence of the 'CountyFullName' value:",
+                                        "substeps": 
+                                     {
+                                         "type": "unordered",
+                                         "details": 
+                                         [
+                                             {
+                                                 "details": "If the 'CountyFullName' value exists, the message is routed directly to the 'HTTP Reply' node."
+                                             },
+                                             {
+                                                 "details": "If the 'CountyFullName' value does not exist (for example, if the Lookup table is not yet cached in memory), the message is routed to the 'File Read' node. The 'File Read' node retrieves name-value pairs from a comma-separated-values file that is parsed by using a DFDL CSV model. The name-value data is passed to the 'LoadCache' Compute node, where the data is loaded into the 'countyNameCache` Lookup table. The 'LoadCache' Compute node also sets the 'CountyFullName' value in the output message."
+                                             }
+                                         ]
+                                     }
+                                    },
+                                    {
+                                        "details": "Double-click the 'LoadCache' Compute node to open the 'LookupCountyFullName.esql' file."
+                                    },
+                                    {
+                                        "details": "In the 'LoadCache_Compute' ESQL module, the Lookup table is created from the data that is read from the comma-separated-values file.  Within the table, each record is stored as a 'key' and 'value' pair, where the 'key' is an abbreviated county name and the 'value' is the related full county name.  The value of 'CountyAbbr' for the current lookup request is taken directly from the 'Environment'."
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                "helpLinks": 
+				{
+                    "title": "Find out more",
+                    "details": 
+		    [
+                        {
+                            "title": "IBM Documentation link to ",
+                            "description": "Testing your message flow by using the Flow exerciser",
+                            "link": "https://www.ibm.com/docs/en/app-connect/12.0?topic=ttmf-testing-your-message-flow-by-using-flow-exerciser",
+							"type": "web"
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}
