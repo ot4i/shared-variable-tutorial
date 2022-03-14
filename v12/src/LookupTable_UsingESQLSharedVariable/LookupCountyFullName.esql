@@ -1,0 +1,39 @@
+
+DECLARE countyNameCache SHARED ROW; 
+CREATE COMPUTE MODULE LookupCountyFullName_Compute
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN	
+		DECLARE countyAbbr REFERENCE TO InputRoot.JSON.Data.Lookup.CountyAbbr;
+		DECLARE countyFullName CHARACTER lookup(countyAbbr);
+		
+		IF LENGTH(countyFullName) <> 0 THEN
+            SET OutputRoot.JSON.Data.Result.CountyFullName = countyFullName;
+		ELSE
+			SET Environment.Variables.CountyAbbr = countyAbbr;
+		END IF;
+		RETURN TRUE;
+	END;
+END MODULE;
+
+CREATE COMPUTE MODULE LoadCache_Compute
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN	
+		DECLARE lookupTable REFERENCE TO InputRoot.DFDL.LookupTableCSVdata;
+		
+		FOR record AS lookupTable.record[] DO
+			CREATE LASTCHILD OF countyNameCache NAME record.key VALUE record.value;
+		END FOR;
+		
+		
+		SET OutputRoot.JSON.Data.Result.CountyFullName = lookup(Environment.Variables.CountyAbbr);
+		RETURN TRUE;
+	END;
+END MODULE;
+
+CREATE FUNCTION lookup(IN countyAbbr CHARACTER) RETURNS CHARACTER
+BEGIN
+    DECLARE countyFullName CHARACTER countyNameCache.{countyAbbr};
+    RETURN countyFullName;
+END;
