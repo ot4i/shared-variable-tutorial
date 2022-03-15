@@ -225,7 +225,7 @@
                                                  "details": "On Windows: Create the input directory <code>C:\\temp</code>."
                                              },
                                              {
-                                                 "details": "On Linux: Create a suitable input directory such as <code>/tmp</code> and change the Input directory property of the 'File Read' node accordingly to point to the same directory."
+                                                 "details": "On Linux: Create a suitable input directory such as <code>tmp</code> and change the Input directory property of the 'File Read' node accordingly to point to the same directory."
                                              }
                                          ]
                                      }
